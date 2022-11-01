@@ -2,7 +2,7 @@
   <div class="note-form__wrapper">
     <form class="note-form" @submit.prevent="onSubmit">
       <textarea required v-model="value" placeholder="Type ur note" />
-      <TagsList @onItemClick="handleTagClick" :items="tags" />
+      <TagsList @onChangeSelectedTag="changeSelectedTag" :items="tags" />
       <button class="btn btnPrimary" type="submit">Add new note</button>
     </form>
   </div>
@@ -15,16 +15,39 @@ export default {
   data() {
     return {
       value: '',
-      tags: ['home', 'work', 'travel']
+      tags: [
+        {
+          title: 'home',
+          selected: false
+        },
+        {
+          title: 'work',
+          selected: false
+        },
+        {
+          title: 'travel',
+          selected: false
+        }
+      ]
     }
   },
   methods: {
     onSubmit() {
-      this.$emit('onSubmit', this.value)
+      let tags = []
+      this.tags
+        .filter(tag => tag.selected)
+        .forEach(item => {
+          tags.push({ title: item.title })
+        })
+      this.$emit('onSubmit', { title: this.value, tags: tags })
       this.value = ''
+      this.tags.forEach(item => {
+        item.selected = false
+      })
     },
-    handleTagClick(tag) {
-      console.log(tag)
+    changeSelectedTag(tagTitle) {
+      let targetTag = this.tags.find(item => item.title == tagTitle)
+      targetTag.selected = !targetTag.selected
     }
   }
 }
