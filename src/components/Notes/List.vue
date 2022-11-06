@@ -1,11 +1,9 @@
 <template>
   <div class="notes-list">
-    <div class="note-item" v-for="(note, index) in items" :key="index">
+    <div class="note-item" v-for="(note, index) in getNotes" :key="index">
       <div class="note-header">
-        <p>{{ note.title }}</p>
-        <p style="cursor: pointer" @click="$emit('onRemove', index)">
-          &#10005;
-        </p>
+        <p>{{ index }}: {{ note.title }}</p>
+        <p style="cursor: pointer" @click="removeNote(index)">&#10005;</p>
       </div>
       <div class="note-footer">
         <TagsList
@@ -22,10 +20,20 @@
 import TagsList from '@/components/UI/TagsList.vue'
 export default {
   components: { TagsList },
-  props: {
-    items: {
-      type: Array,
-      required: true
+  mounted() {
+    this.getActualNotes()
+  },
+  computed: {
+    getNotes() {
+      return this.$store.getters.getNotes
+    }
+  },
+  methods: {
+    getActualNotes() {
+      this.$store.dispatch('getActualNotes')
+    },
+    removeNote(index) {
+      this.$store.dispatch('removeNote', index)
     }
   }
 }

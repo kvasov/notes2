@@ -12,42 +12,25 @@
 import TagsList from '@/components/UI/TagsList.vue'
 export default {
   components: { TagsList },
-  data() {
-    return {
-      value: '',
-      tags: [
-        {
-          title: 'home',
-          selected: false
-        },
-        {
-          title: 'work',
-          selected: false
-        },
-        {
-          title: 'travel',
-          selected: false
-        }
-      ]
+  computed: {
+    value: {
+      get() {
+        return this.$store.getters.getNewNoteTitile
+      },
+      set(value) {
+        this.$store.commit('setNewNoteTitle', value)
+      }
+    },
+    tags() {
+      return this.$store.getters.getNewNoteTags
     }
   },
   methods: {
     onSubmit() {
-      let tags = []
-      this.tags
-        .filter(tag => tag.selected)
-        .forEach(item => {
-          tags.push({ title: item.title })
-        })
-      this.$emit('onSubmit', { title: this.value, tags: tags })
-      this.value = ''
-      this.tags.forEach(item => {
-        item.selected = false
-      })
+      this.$store.dispatch('addNewNote')
     },
     changeSelectedTag(tagTitle) {
-      let targetTag = this.tags.find(item => item.title == tagTitle)
-      targetTag.selected = !targetTag.selected
+      this.$store.dispatch('changeSelectedTag', tagTitle)
     }
   }
 }
